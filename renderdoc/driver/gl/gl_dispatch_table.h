@@ -35,9 +35,12 @@ typedef std::function<void *(const char *)> PlatformGetProcAddr;
 // clang-format off
 struct GLDispatchTable
 {
-  // This function can be used to populate the dispatch table, fully or partiall. Any NULL function
+  // This function can be used to populate the dispatch table, fully or partially. Any NULL function
   // will be passed to the callback to get a pointer
   void PopulateWithCallback(PlatformGetProcAddr lookupFunc);
+  // This function can be used to repopulate the dispatch table. All functions will be passed to the
+  // callback to get a pointer
+  void RepopulateWithCallback(PlatformGetProcAddr lookupFunc);
 
   // These functions are called after fully populating the hookset, to emulate functions that are
   // one way or another unsupported but we can software emulate them and want to assume their

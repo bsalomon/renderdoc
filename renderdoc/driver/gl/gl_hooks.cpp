@@ -231,6 +231,19 @@ void GLDispatchTable::PopulateWithCallback(PlatformGetProcAddr lookupFunc)
   }
 
   ForEachSupported(HookFunc);
+#undef HookFunc
+}
+
+void GLDispatchTable::RepopulateWithCallback(PlatformGetProcAddr lookupFunc)
+{
+#define HookFunc(function, name)                                                    \
+  {                                                                                 \
+    ScopedSuppressHooking suppress;                                                 \
+    GL.function = (decltype(GL.function))lookupFunc((const char *)STRINGIZE(name)); \
+  }
+
+  ForEachSupported(HookFunc);
+#undef HookFunc
 }
 
 static void GLHooked(void *handle)

@@ -276,6 +276,11 @@ HOOK_EXPORT Bool glXMakeCurrent_renderdoc_hooked(Display *dpy, GLXDrawable drawa
     {
       glxhook.contexts.insert(ctx);
 
+      GL.RepopulateWithCallback([](const char *funcName) -> void * {
+         ScopedSuppressHooking suppress;
+         return (void *)GLX.glXGetProcAddressARB((const GLubyte *)funcName);
+      });
+
       FetchEnabledExtensions();
 
       // see gl_emulated.cpp
@@ -343,6 +348,11 @@ HOOK_EXPORT Bool glXMakeContextCurrent_renderdoc_hooked(Display *dpy, GLXDrawabl
     if(ctx && glxhook.contexts.find(ctx) == glxhook.contexts.end())
     {
       glxhook.contexts.insert(ctx);
+
+      GL.RepopulateWithCallback([](const char *funcName) -> void * {
+        ScopedSuppressHooking suppress;
+        return (void *)GLX.glXGetProcAddressARB((const GLubyte *)funcName);
+      });
 
       FetchEnabledExtensions();
 
@@ -654,7 +664,7 @@ static void GLXHooked(void *handle)
   // library hooked by calling eglGetProcAddress.
   GL.PopulateWithCallback([](const char *funcName) -> void * {
     ScopedSuppressHooking suppress;
-    return (void *)GLX.glXGetProcAddress((const GLubyte *)funcName);
+    return (void *)GLX.glXGetProcAddressARB((const GLubyte *)funcName);
   });
 }
 
